@@ -1,0 +1,1018 @@
+{
+    "beaker": "2",
+    "evaluators": [
+        {
+            "name": "Html",
+            "plugin": "Html",
+            "view": {
+                "cm": {
+                    "mode": "htmlmixed"
+                }
+            }
+        },
+        {
+            "name": "JavaScript",
+            "plugin": "JavaScript",
+            "jsSetting2": "",
+            "jsSetting1": "",
+            "view": {
+                "cm": {
+                    "mode": "javascript",
+                    "background": "#FFE0F0"
+                }
+            }
+        },
+        {
+            "name": "IPython",
+            "plugin": "IPython",
+            "setup": "%matplotlib inline\nimport numpy\nimport matplotlib\nfrom matplotlib import pylab, mlab, pyplot\nnp = numpy\nplt = pyplot\nfrom IPython.display import display\nfrom IPython.core.pylabtools import figsize, getfigs\nfrom pylab import *\nfrom numpy import *\n",
+            "view": {
+                "cm": {
+                    "mode": "python"
+                }
+            }
+        }
+    ],
+    "cells": [
+        {
+            "id": "codesNyDH2",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "# This is a code cell.",
+                    "# Click below, on the 3rd line, then type some Python code (eg \"1+2\"), then click \"Run\".",
+                    "#import libraries",
+                    "import numpy",
+                    "import pandas",
+                    "import matplotlib",
+                    "import math",
+                    "import Quandl",
+                    "from array import array",
+                    "import csv"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 531
+            },
+            "evaluatorReader": true,
+            "lineCount": 10
+        },
+        {
+            "id": "codeLCqpsg",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "token = 'AyC4SoKiufan7rQSRZA4'",
+                    "start_date = '1963-07-01'",
+                    "end_date = '2015-12-31'",
+                    "",
+                    "quandl_keys = ['FRED/DGS1']",
+                    "#begin exchange rates",
+                    "quandl_keys.append('FRED/DGS5')",
+                    "quandl_keys.append('FRED/DGS10')",
+                    "quandl_keys.append('YAHOO/INDEX_GSPC')"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 412
+            },
+            "evaluatorReader": true,
+            "lineCount": 9
+        },
+        {
+            "id": "codeSzH58o",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "bulk_set = Quandl.get(quandl_keys[0],trim_start=start_date,trim_end=end_date,authtoken=token)",
+                    "bulk_set.rename(columns = {bulk_set.columns[0]:quandl_keys[0]+ ' ' + bulk_set.columns[0]}, inplace = True)",
+                    "lengths = numpy.zeros((len(quandl_keys),2))",
+                    "lengths[0,0] = len(bulk_set)",
+                    "lengths[0,1] = len(bulk_set)",
+                    "",
+                    "",
+                    "for i in range(1, len(quandl_keys)):",
+                    "    temp_data = Quandl.get(quandl_keys[i],trim_start=start_date,trim_end=end_date,authtoken=token)",
+                    "    for j in range(0,temp_data.shape[1]):",
+                    "        temp_data.rename(columns = {temp_data.columns[j]:quandl_keys[i]+ ' ' + temp_data.columns[j]}, inplace = True)",
+                    "    if len(temp_data) > 5600:",
+                    "        bulk_set = pandas.DataFrame.merge(bulk_set,temp_data, how ='inner', left_index=True,right_index=True)",
+                    "    lengths[i,0] = len(temp_data)",
+                    "    lengths[i,1] = len(bulk_set)",
+                    "print bulk_set.shape",
+                    "print lengths"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "(12899, 9)\n[[ 13112.  13112.]\n [ 13112.  13112.]\n [ 12937.  12937.]\n [ 13217.  12899.]]"
+                        },
+                        {
+                            "type": "out",
+                            "value": "\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 20019
+            },
+            "evaluatorReader": true,
+            "lineCount": 17
+        },
+        {
+            "id": "code5aOeW7",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "raw_data = pandas.read_csv('/Users/shane/Google Drive/Quant work/FF daily.csv')",
+                    "temp_index = raw_data['Date']",
+                    "indexed_data = raw_data.iloc[:,1:]",
+                    "indexed_data.index=temp_index"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 454
+            },
+            "evaluatorReader": true,
+            "lineCount": 4
+        },
+        {
+            "id": "codeOEfXFP",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "both_sets=pandas.DataFrame.merge(bulk_set,indexed_data, how ='inner', left_index=True,right_index=True)",
+                    "both_sets.to_csv('/Users/shane/Google Drive/Quant work/daily_ff_data.csv')"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 2046
+            },
+            "evaluatorReader": true,
+            "lineCount": 2
+        },
+        {
+            "id": "codeSe3oPu",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "raw_data = pandas.read_csv('/Users/shane/Google Drive/Quant work/daily_ff_data.csv')",
+                    "temp_index = raw_data.iloc[:,0]",
+                    "both_sets = raw_data.iloc[:,1:]",
+                    "both_sets.index=temp_index"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 378
+            },
+            "evaluatorReader": true,
+            "lineCount": 4
+        },
+        {
+            "id": "codeH8fvrd",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "both_sets2=both_sets.drop({'YAHOO/INDEX_GSPC Open','YAHOO/INDEX_GSPC High','YAHOO/INDEX_GSPC Low','YAHOO/INDEX_GSPC Close','YAHOO/INDEX_GSPC Volume'}, axis = 1)",
+                    "print both_sets2.columns ",
+                    ""
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "Index([u'FRED/DGS1 VALUE', u'FRED/DGS5 VALUE', u'FRED/DGS10 VALUE',\n       u'YAHOO/INDEX_GSPC Adj Close', u'Mkt-RF', u'SMB', u'HML', u'RMW',\n       u'CMA', u'RF', u'Agric', u'Mines', u'Oil  ', u'Stone', u'Cnstr',\n       u'Food ', u'Smoke', u'Txtls', u'Apprl', u'Wood ', u'Chair', u'Paper',\n       u'Print', u'Chems', u'Ptrlm', u'Rubbr', u'Lethr', u'Glass', u'Metal',\n       u'MtlPr', u'Machn', u'Elctr', u'Cars ', u'Instr', u'Manuf', u'Trans',\n       u'Phone', u'TV   ', u'Utils', u'Whlsl', u'Rtail', u'Money', u'Srvc ',\n       u'Govt '],\n      dtype='object')\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 348
+            },
+            "evaluatorReader": true,
+            "lineCount": 3
+        },
+        {
+            "id": "codeSdKzNf",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "#print both_sets2.head(5)",
+                    "print both_sets2.iloc[500:550,9]"
+                ],
+                "hidden": true
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "Unnamed: 0\n1965-07-02    0.015\n1965-07-06    0.015\n1965-07-07    0.015\n1965-07-08    0.015\n1965-07-09    0.015\n1965-07-12    0.015\n1965-07-13   -0.015\n1965-07-14    0.030\n1965-07-15   -0.030\n1965-07-16    0.045\n1965-07-19   -0.030\n1965-07-20    0.045\n1965-07-21   -0.030\n1965-07-22    0.045\n1965-07-23   -0.030\n1965-07-26    0.045\n1965-07-27   -0.030\n1965-07-28    0.045\n1965-07-29   -0.030\n1965-07-30    0.045\n1965-08-02   -0.030\n1965-08-03    0.045\n1965-08-04   -0.030\n1965-08-05    0.045\n1965-08-06   -0.030\n1965-08-09    0.045\n1965-08-10   -0.030\n1965-08-11    0.045\n1965-08-12   -0.030\n1965-08-13    0.045\n1965-08-16   -0.030\n1965-08-17    0.045\n1965-08-18   -0.030\n1965-08-19    0.045\n1965-08-20   -0.030\n1965-08-23    0.045\n1965-08-24   -0.030\n1965-08-25    0.045\n1965-08-26   -0.030\n1965-08-27    0.045\n1965-08-30   -0.030\n1965-08-31    0.045\n1965-09-01   -0.030\n1965-09-02    0.045\n1965-09-03   -0.030\n1965-09-07    0.045\n1965-09-08   -0.030\n1965-09-09    0.045\n1965-09-10   -0.030\n1965-09-13    0.045\nName: RF, dtype: float64\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 225,
+                "hidden": true
+            },
+            "evaluatorReader": true,
+            "lineCount": 2
+        },
+        {
+            "id": "codeGfNaKa",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "diff = {both_sets2.columns[0],both_sets2.columns[1],both_sets2.columns[2]}",
+                    "diff2 = {'RF'}",
+                    "#divide={'Mkt-RF'}",
+                    "",
+                    "log={'YAHOO/INDEX_GSPC Adj Close'}",
+                    "",
+                    "daily_returns = both_sets2.iloc[506:,:]",
+                    "",
+                    "row = 0",
+                    "for i in range(506,len(both_sets2)):",
+                    "    for j in range(0,both_sets2.shape[1]):",
+                    "        col_name = both_sets2.columns[j]",
+                    "        if col_name in diff:",
+                    "            daily_returns.iloc[row,j] = (both_sets2.iloc[i,j]-both_sets2.iloc[i-1,j])/100",
+                    "        elif col_name in diff2:",
+                    "            daily_returns.iloc[row,j] = both_sets2.iloc[i,j]",
+                    "            ",
+                    "        elif col_name in log:",
+                    "            a1=both_sets.iloc[i,8]",
+                    "            a2=both_sets.iloc[i-1,8]",
+                    "            daily_returns.iloc[row,j] = numpy.log(a1/a2)",
+                    "        else:",
+                    "            daily_returns.iloc[row,j] = numpy.log(1+(both_sets2.iloc[i,j])/100)",
+                    "    row = row + 1",
+                    "",
+                    "",
+                    "daily_returns.to_csv('/Users/shane/Google Drive/Quant work/daily_ff_log_returns_right.csv')"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "err",
+                            "value": "/Users/shane/anaconda/lib/python2.7/site-packages/IPython/kernel/__main__.py:14: SettingWithCopyWarning: \nA value is trying to be set on a copy of a slice from a DataFrame\n\nSee the the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy\n/Users/shane/anaconda/lib/python2.7/site-packages/IPython/kernel/__main__.py:21: SettingWithCopyWarning: \nA value is trying to be set on a copy of a slice from a DataFrame\n\nSee the the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy\n"
+                        },
+                        {
+                            "type": "err",
+                            "value": "/Users/shane/anaconda/lib/python2.7/site-packages/IPython/kernel/__main__.py:23: SettingWithCopyWarning: \nA value is trying to be set on a copy of a slice from a DataFrame\n\nSee the the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy\n/Users/shane/anaconda/lib/python2.7/site-packages/IPython/kernel/__main__.py:16: SettingWithCopyWarning: \nA value is trying to be set on a copy of a slice from a DataFrame\n\nSee the the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 15405666
+            },
+            "evaluatorReader": true,
+            "lineCount": 27
+        },
+        {
+            "id": "codezuxzPo",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "print daily_returns.tail(5)"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "            FRED/DGS1 VALUE  FRED/DGS5 VALUE  FRED/DGS10 VALUE  \\\nUnnamed: 0                                                       \n2015-12-14         0.006733         0.016446          0.022089   \n2015-12-15         0.006833         0.016936          0.022579   \n2015-12-16         0.006932         0.017331          0.022774   \n2015-12-17         0.006831         0.017127          0.022172   \n2015-12-18         0.006632         0.016529          0.021678   \n\n            YAHOO/INDEX_GSPC Adj Close    Mkt-RF       SMB       HML  \\\nUnnamed: 0                                                             \n2015-12-14                    0.004744  0.002896 -0.011263 -0.000900   \n2015-12-15                    0.010563  0.010940  0.002098  0.006777   \n2015-12-16                    0.014411  0.014593 -0.000100 -0.005415   \n2015-12-17                   -0.015155 -0.014708  0.002896 -0.002804   \n2015-12-18                   -0.017957 -0.017146  0.006976 -0.003005   \n\n                 RMW       CMA     RF    ...        Manuf     Trans     Phone  \\\nUnnamed: 0                               ...                                    \n2015-12-14  0.002297 -0.003305  0.043    ...    -0.013795 -0.000800  0.008662   \n2015-12-15 -0.007831  0.001399 -0.043    ...     0.016759  0.011632  0.008266   \n2015-12-16 -0.002704 -0.001701  0.043    ...     0.015086  0.016464  0.021566   \n2015-12-17 -0.002704 -0.000700 -0.043    ...    -0.020305 -0.017859 -0.009949   \n2015-12-18 -0.003105  0.001898  0.043    ...    -0.011061 -0.022552 -0.013693   \n\n               TV        Utils     Whlsl     Rtail     Money     Srvc   \\\nUnnamed: 0                                                               \n2015-12-14 -0.006723 -0.000100 -0.001501  0.009356 -0.000600  0.007571   \n2015-12-15  0.013410  0.008365  0.000200 -0.001201  0.022642  0.006678   \n2015-12-16  0.017349  0.022446  0.010148  0.016169  0.014889  0.016365   \n2015-12-17 -0.017146 -0.003807 -0.009545 -0.015418 -0.014606 -0.013592   \n2015-12-18 -0.022655 -0.012984 -0.009243 -0.009949 -0.023985 -0.017655   \n\n               Govt   \nUnnamed: 0            \n2015-12-14  0.006181  \n2015-12-15  0.012719  \n2015-12-16  0.013903  \n2015-12-17 -0.010353  \n2015-12-18 -0.020815  \n\n[5 rows x 44 columns]\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 488
+            },
+            "evaluatorReader": true,
+            "lineCount": 1
+        },
+        {
+            "id": "codeDRueNI",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "print daily_returns.head(5)",
+                    "print daily_returns.shape",
+                    "daily_returns.to_csv('/Users/shane/Google Drive/Quant work/daily_ff_log_returns.csv')"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "            FRED/DGS1 VALUE  FRED/DGS5 VALUE  FRED/DGS10 VALUE  \\\nUnnamed: 0                                                       \n1965-07-13        -0.039800        -0.041500         -0.042100   \n1965-07-14         0.000797         0.000830          0.000842   \n1965-07-15         0.000386         0.000403          0.000407   \n1965-07-16         0.000390         0.000407          0.000412   \n1965-07-19         0.039796         0.041396          0.041996   \n\n            YAHOO/INDEX_GSPC Adj Close    Mkt-RF       SMB       HML  \\\nUnnamed: 0                                                             \n1965-07-13                   -0.001168 -0.000013 -0.000019 -0.000024   \n1965-07-14                    0.003266  0.000029  0.000014  0.000016   \n1965-07-15                   -0.001748 -0.000010  0.000029 -0.000002   \n1965-07-16                   -0.000350 -0.000004  0.000002 -0.000005   \n1965-07-19                   -0.000701 -0.000900  0.000700 -0.002704   \n\n                 RMW       CMA     RF    ...        Manuf     Trans     Phone  \\\nUnnamed: 0                               ...                                    \n1965-07-13 -0.000004  0.000007 -0.015    ...    -0.000043 -0.000056  0.000032   \n1965-07-14  0.000005 -0.000014  0.030    ...    -0.000059  0.000062 -0.000030   \n1965-07-15 -0.000008 -0.000008 -0.030    ...    -0.000058  0.000032 -0.000010   \n1965-07-16 -0.000012 -0.000025  0.045    ...    -0.000034 -0.000009 -0.000001   \n1965-07-19 -0.000800  0.001798 -0.030    ...    -0.003606 -0.002403 -0.003707   \n\n               TV            Utils     Whlsl     Rtail     Money     Srvc   \\\nUnnamed: 0                                                                   \n1965-07-13 -0.000088 -2.402913e-05  0.000128  0.000000 -0.000045  0.000015   \n1965-07-14  0.000029  9.999495e-07 -0.000031 -0.000005 -0.000023  0.000041   \n1965-07-15  0.000060 -1.200728e-05  0.000028 -0.000010  0.000016  0.000031   \n1965-07-16 -0.000106 -5.001263e-06  0.000074  0.000047  0.000006  0.000040   \n1965-07-19 -0.008032 -1.200721e-03 -0.000700 -0.002002 -0.002804 -0.004711   \n\n               Govt   \nUnnamed: 0            \n1965-07-13 -0.000141  \n1965-07-14  0.000141  \n1965-07-15 -0.000212  \n1965-07-16  0.000212  \n1965-07-19  0.006976  \n\n[5 rows x 44 columns]\n(12560, 44)\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 591
+            },
+            "evaluatorReader": true,
+            "lineCount": 3
+        },
+        {
+            "id": "codegzRhKT",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "indexed_data=daily_returns",
+                    "",
+                    "new_index = indexed_data.index[255:len(daily_returns)]",
+                    "back1w = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "back1 = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "back2 = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "back3 = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "back6 = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "back1y = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "",
+                    "back6m1y = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "back3m6m = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "back1m3m = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "back1w1m = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "",
+                    "",
+                    "vol1m = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "vol2m = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "vol3m = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "vol6m = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "vol1y = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "vol3m1y = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "vol1m3m = pandas.DataFrame(data= numpy.zeros((len(new_index),indexed_data.shape[1])),index= new_index)",
+                    "",
+                    "for j in range(0,indexed_data.shape[1]):",
+                    "    back1w.rename(columns = {j:'back1w' + indexed_data.columns[j]}, inplace = True)",
+                    "    back1.rename(columns = {j:'back1m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    back2.rename(columns = {j:'back2m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    back3.rename(columns = {j:'back3m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    back6.rename(columns = {j:'back6m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    back1y.rename(columns = {j:'back1y ' + indexed_data.columns[j]}, inplace = True)",
+                    "    back6m1y.rename(columns = {j:'back6m1y ' + indexed_data.columns[j]}, inplace = True)",
+                    "    back3m6m.rename(columns = {j:'back3m6m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    back1m3m.rename(columns = {j:'back1m3m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    back1w1m.rename(columns = {j:'back1w1m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    vol1m.rename(columns = {j:'vol1m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    vol2m.rename(columns = {j:'vol2m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    vol3m.rename(columns = {j:'vol3m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    vol6m.rename(columns = {j:'vol6m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    vol1y.rename(columns = {j:'vol1y ' + indexed_data.columns[j]}, inplace = True)",
+                    "    vol3m1y.rename(columns = {j:'vol3m1y ' + indexed_data.columns[j]}, inplace = True)",
+                    "    vol1m3m.rename(columns = {j:'vol1m3m ' + indexed_data.columns[j]}, inplace = True)"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 5516
+            },
+            "evaluatorReader": true,
+            "lineCount": 42
+        },
+        {
+            "id": "code6C31oR",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "row = 0",
+                    "for i in range(256,len(daily_returns)):",
+                    "    temp1w = indexed_data.iloc[(i-5):i,:]",
+                    "    temp1m = indexed_data.iloc[(i-21):i,:]",
+                    "    temp2m = indexed_data.iloc[(i-42):i,:]",
+                    "    temp3m = indexed_data.iloc[(i-63):i,:]",
+                    "    temp6m = indexed_data.iloc[(i-126):i,:]",
+                    "    temp1y = indexed_data.iloc[(i-255):i,:]",
+                    "               ",
+                    "    for j in range(0,indexed_data.shape[1]):",
+                    "        back1w.iloc[row,j] = numpy.sum(double(temp1w.iloc[:,j]))",
+                    "        back1.iloc[row,j] = numpy.sum(double(temp1m.iloc[:,j]))",
+                    "        back2.iloc[row,j] = numpy.sum(double(temp2m.iloc[:,j]))",
+                    "        back3.iloc[row,j] = numpy.sum(double(temp3m.iloc[:,j]))",
+                    "        back6.iloc[row,j] = numpy.sum(double(temp6m.iloc[:,j]))",
+                    "        back1y.iloc[row,j] = numpy.sum(double(temp1y.iloc[:,j]))",
+                    "        vol1m.iloc[row,j] = numpy.std(double(temp1m.iloc[:,j]))",
+                    "        vol2m.iloc[row,j] = numpy.std(double(temp2m.iloc[:,j]))",
+                    "        vol3m.iloc[row,j] = numpy.std(double(temp3m.iloc[:,j]))",
+                    "        vol6m.iloc[row,j] = numpy.std(double(temp6m.iloc[:,j]))",
+                    "        vol1y.iloc[row,j] = numpy.std(double(temp1y.iloc[:,j]))",
+                    "        back6m1y.iloc[row,j]= back6.iloc[row,j]-back1y.iloc[row,j]",
+                    "        back3m6m.iloc[row,j]= back3.iloc[row,j]-back6.iloc[row,j]",
+                    "        back1m3m.iloc[row,j]= back1.iloc[row,j]-back3.iloc[row,j]",
+                    "        back1w1m.iloc[row,j] = back1w.iloc[row,j]-back1.iloc[row,j]",
+                    "        vol3m1y.iloc[row,j]=vol3m.iloc[row,j]/vol1y.iloc[row,j]",
+                    "        vol1m3m.iloc[row,j]=vol1m.iloc[row,j]/vol3m.iloc[row,j]",
+                    "        ",
+                    "    row +=1"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 3093439
+            },
+            "evaluatorReader": true,
+            "lineCount": 29
+        },
+        {
+            "id": "code1wnfar",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "row = 0",
+                    "for i in range(256,len(daily_returns)):",
+                    "",
+                    "               ",
+                    "    for j in range(0,indexed_data.shape[1]):",
+                    "        back6m1y.iloc[row,j]= back6.iloc[row,j]-back1y.iloc[row,j]",
+                    "        back3m6m.iloc[row,j]= back3.iloc[row,j]-back6.iloc[row,j]",
+                    "        back1m3m.iloc[row,j]= back1.iloc[row,j]-back3.iloc[row,j]",
+                    "        back1w1m.iloc[row,j] = back1w.iloc[row,j]-back1.iloc[row,j]",
+                    "        ",
+                    "    row +=1"
+                ],
+                "hidden": true
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 686724
+            },
+            "evaluatorReader": true,
+            "lineCount": 11
+        },
+        {
+            "id": "codeZd52P8",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "indexed_data.index[255:257]"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": "<div class=\"output_subarea output_text\"><pre>Index([u'1966-07-19'], dtype='object', name=u'Unnamed: 0')</pre></div>",
+                "selectedType": "Html",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 275
+            },
+            "evaluatorReader": true,
+            "lineCount": 1
+        },
+        {
+            "id": "codeVDc8uN",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "new_index2 = indexed_data.index[255:len(daily_returns)-117]",
+                    "forward1w = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "forward1 = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "forward2 = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "forward3 = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "forward6 = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "",
+                    "",
+                    "forward1back1 = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "forward1back3 = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "forward3back3 = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "forward3back6 = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "forward6back1y = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "forward1m3m = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "",
+                    "",
+                    "vol1m_forward = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "vol2m_forward = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "vol3m_forward = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "vol6m_forward = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "",
+                    "",
+                    "volforward1back3 = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "volforward3back3 = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "volforward3back6 = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "volforward6back1y = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "volforward3m6m = pandas.DataFrame(data= numpy.zeros((len(new_index2),indexed_data.shape[1])),index= new_index2)",
+                    "",
+                    "for j in range(0,indexed_data.shape[1]):",
+                    "    forward1w.rename(columns = {j:'forward1w ' + indexed_data.columns[j]}, inplace = True)",
+                    "    forward1.rename(columns = {j:'forward1m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    forward2.rename(columns = {j:'forward2m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    forward3.rename(columns = {j:'forward3m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    forward6.rename(columns = {j:'forward6m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    ",
+                    "    forward1back1.rename(columns = {j:'forward1back1 ' + indexed_data.columns[j]}, inplace = True)",
+                    "    forward1back3.rename(columns = {j:'forward1back3 ' + indexed_data.columns[j]}, inplace = True)",
+                    "    forward3back3.rename(columns = {j:'forward3back3 ' + indexed_data.columns[j]}, inplace = True)",
+                    "    forward3back6.rename(columns = {j:'forward3back6 ' + indexed_data.columns[j]}, inplace = True)",
+                    "    forward6back1y.rename(columns = {j:'forward6back1y ' + indexed_data.columns[j]}, inplace = True)",
+                    "    forward1m3m.rename(columns = {j:'forward1m3m ' + indexed_data.columns[j]}, inplace = True)",
+                    "    ",
+                    "    vol1m_forward.rename(columns = {j:'vol1m_forward ' + indexed_data.columns[j]}, inplace = True)",
+                    "    vol2m_forward.rename(columns = {j:'vol2m_forward ' + indexed_data.columns[j]}, inplace = True)",
+                    "    vol3m_forward.rename(columns = {j:'vol3m_forward ' + indexed_data.columns[j]}, inplace = True)",
+                    "    vol6m_forward.rename(columns = {j:'vol6m_forward ' + indexed_data.columns[j]}, inplace = True)",
+                    "",
+                    "    volforward1back3.rename(columns = {j:'volforward1back3 ' + indexed_data.columns[j]}, inplace = True)",
+                    "    volforward3back3.rename(columns = {j:'volforward3back3 ' + indexed_data.columns[j]}, inplace = True)",
+                    "    volforward3back6.rename(columns = {j:'volforward3back6 ' + indexed_data.columns[j]}, inplace = True)",
+                    "    volforward6back1y.rename(columns = {j:'volforward6back1y ' + indexed_data.columns[j]}, inplace = True)",
+                    "    volforward3m6m.rename(columns = {j:'volforward3m6m ' + indexed_data.columns[j]}, inplace = True)"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 2531
+            },
+            "evaluatorReader": true,
+            "lineCount": 52
+        },
+        {
+            "id": "codevYuVGR",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "row = 0",
+                    "for i in range(255,len(daily_returns)-117):",
+                    "    temp1w = indexed_data.iloc[i:(i+5),:]",
+                    "    temp1m = indexed_data.iloc[i:(i+21),:]",
+                    "    temp2m = indexed_data.iloc[i:(i+42),:]",
+                    "    temp3m = indexed_data.iloc[i:(i+63),:]",
+                    "    temp6m = indexed_data.iloc[i:(i+126),:]",
+                    "",
+                    "               ",
+                    "    for j in range(0,indexed_data.shape[1]):",
+                    "        forward1w.iloc[row,j] = numpy.sum(double(temp1w.iloc[:,j]))",
+                    "        forward1.iloc[row,j] = numpy.sum(double(temp1m.iloc[:,j]))",
+                    "        forward2.iloc[row,j] = numpy.sum(double(temp2m.iloc[:,j]))",
+                    "        forward3.iloc[row,j] = numpy.sum(double(temp3m.iloc[:,j]))",
+                    "        forward6.iloc[row,j] = numpy.sum(double(temp6m.iloc[:,j]))",
+                    "        ",
+                    "        vol1m_forward.iloc[row,j] = numpy.std(double(temp1m.iloc[:,j]))",
+                    "        vol2m_forward.iloc[row,j] = numpy.std(double(temp2m.iloc[:,j]))",
+                    "        vol3m_forward.iloc[row,j] = numpy.std(double(temp3m.iloc[:,j]))",
+                    "        vol6m_forward.iloc[row,j] = numpy.std(double(temp6m.iloc[:,j]))",
+                    "        ",
+                    "        forward1back1.iloc[row,j]= forward1.iloc[row,j]-back1.iloc[row,j]",
+                    "        forward1back3.iloc[row,j]= forward1.iloc[row,j]-back3.iloc[row,j]",
+                    "        forward3back3.iloc[row,j]= forward3.iloc[row,j]-back3.iloc[row,j]",
+                    "        forward3back6.iloc[row,j]= forward3.iloc[row,j]-back6.iloc[row,j]",
+                    "        forward6back1y.iloc[row,j]= forward6.iloc[row,j]-back1y.iloc[row,j]",
+                    "        forward1m3m.iloc[row,j]= forward1.iloc[row,j]-forward3.iloc[row,j]",
+                    "        ",
+                    "        volforward1back3.iloc[row,j]=vol1m_forward.iloc[row,j]/vol3m.iloc[row,j]",
+                    "        volforward3back3.iloc[row,j]=vol3m_forward.iloc[row,j]/vol3m.iloc[row,j]",
+                    "        volforward3back6.iloc[row,j]=vol3m_forward.iloc[row,j]/vol6m.iloc[row,j]",
+                    "        volforward6back1y.iloc[row,j]=vol6m_forward.iloc[row,j]/vol1y.iloc[row,j]",
+                    "        volforward3m6m.iloc[row,j]=vol3m_forward.iloc[row,j]/vol6m_forward.iloc[row,j]",
+                    "        ",
+                    "    row +=1"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 3162000
+            },
+            "evaluatorReader": true,
+            "lineCount": 35
+        },
+        {
+            "id": "codeF40ISA",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "from ayasdi.core.api import Api",
+                    "import time"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 702
+            },
+            "evaluatorReader": true,
+            "lineCount": 2
+        },
+        {
+            "id": "codevmcFin",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "connection = Api(username='sam0050@auburn.edu',password='Ayasdi2015!')"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 5401
+            },
+            "evaluatorReader": true,
+            "lineCount": 1
+        },
+        {
+            "id": "codeOSNgGs",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "sources = connection.get_sources()",
+                    "print sources"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "[<Source 'FF_benchmarks_with_vols.csv'>, <Source 'FF_benchmarks_with_volatilities_count2.csv'>, <Source 'ayasdi_benchmarks_with_volatilities.csv'>, <Source 'Economic Benchmarks long term.csv'>, <Source 'non_pegged_crosses_txt2.csv'>, <Source 'train.csv'>, <Source 'ayasdi_benchmarks_transposed.csv'>, <Source 'Ayasdi Benchmarks all forwards.csv'>, <Source 'Ayasdi_Benchmarks.csv'>, <Source 'Log_currency2.csv'>, <Source 'LDDec_8_Try2.csv'>, <Source 'crosses_rates_benchmarks2.csv'>, <Source 'LD2015-12-08.csv'>, <Source 'Log_currency.csv'>, <Source 'MA5_transposed.csv'>, <Source 'Round 1 5MA.csv'>, <Source 'log_unique_views.csv'>, <Source 'Website_weekly_transpose_nullsRemoved.csv'>, <Source 'website_weekly_unique_pageviews_no_nulls.csv'>, <Source 'website_weekly_unique_pageviews3.csv'>, <Source 'website_raw.csv'>, <Source 'log_unique.csv'>, <Source 'website_unique_transposed.csv'>, <Source 'data_USD.csv'>, <Source 'Financial Data no null values.csv'>, <Source 'Ayasdi_data_1.csv'>, <Source 'test_out.csv'>, <Source 'all_reviews_all_brands_02_05_15.csv'>, <Source 'avg_per_month_starbucks_02_05_15.csv'>, <Source 'test_out2.csv'>, <Source 'MyData.csv'>, <Source 'US Sectors.csv'>, <Source 'MyDataChanges.csv'>, <Source 'MyDataChanges_2.csv'>, <Source 'currency.csv'>, <Source 'BBY.csv'>, <Source 'DJIA.csv'>, <Source 'Post 2013 with commodities.csv'>, <Source 'Transpose of Financial Data no null values.csv'>, <Source 'factor_moves.csv'>, <Source 'factors_full.csv'>, <Source 'MyData_weekly_norm.csv'>, <Source 'W120_1MA_ex_outliers_coefficients.csv'>, <Source 'W120_1MA_ex_outliers_coefficient_C1.csv'>, <Source 'W120_1MA_ex_outliers_coefficient_C1C2.csv'>, <Source 'All ETFs.csv'>, <Source 'PCA Financial Data All Factors.csv'>, <Source 'W120_1MA_ex_outliers_coefficient_C1_Transpose.csv'>, <Source 'US Sector Metrics.csv'>, <Source 'aapl.csv'>, <Source 'MyData_weekly_t.csv'>, <Source 'MyData_weekly_t_np.csv'>, <Source 'MyData_weekly_t_usd.csv'>, <Source 'Portfolio_TFG.csv'>, <Source 'x_sim.csv'>, <Source 'Benchmarks.csv'>, <Source 'Benchmarks1.csv'>, <Source 'non_pegged_crosses_agreg.csv'>, <Source 'PC1.csv'>, <Source 'c_ids.csv'>, <Source 'c_ids1.csv'>, <Source 'test.csv'>, <Source 'countries_ids.csv'>, <Source 'non_pegged_crosses_agreg_tot.csv'>, <Source 'State1Return.csv'>, <Source 'State2Return.csv'>, <Source 'State3Return.csv'>, <Source 'State4Return.csv'>, <Source 'State5Return.csv'>, <Source 'State1Return_np.csv'>, <Source 'State2Return_np.csv'>, <Source 'State3Return_np.csv'>, <Source 'State4Return_np.csv'>, <Source 'State5Return_np.csv'>, <Source 'FX Metrics.csv'>, <Source 'Equities only Metrics.csv'>, <Source 'Equity only Metrics.csv'>, <Source 'ayasdi_test.csv'>, <Source 'Book1.csv'>, <Source 'State1Vol_np.csv'>, <Source 'State2Vol_np.csv'>, <Source 'State3Vol_np.csv'>, <Source 'State4Vol_np.csv'>, <Source 'State5Vol_np.csv'>, <Source 'Project Metrics.csv'>, <Source 'BunchOfData4Ayasdi.csv'>, <Source 'BunchOfData4Ayasdi2.csv'>, <Source 'data_edit.csv'>, <Source 'data_edit1.csv'>, <Source 'gros fichier bourrin final v3.csv'>, <Source 'LE_DERNIER.csv'>, <Source 'Loans_Dat_Basic.csv'>, <Source 'rankings_data.csv'>, <Source 'MA5.csv'>, <Source 'moyenne_mobile.csv'>, <Source 'Golden_data.csv'>, <Source 'S&P 500 Company Returns.csv'>, <Source 'Stocks Historical Returns.csv'>, <Source 'distance_matrix.csv'>, <Source 'drift_diffusion.csv'>, <Source 'drift_dif.csv'>, <Source 'C1.csv'>, <Source 'C1C2.csv'>, <Source 'Residual Return Data .csv'>, <Source 'Ayasdi Stock Residual Dataset.csv'>, <Source 'test.txt'>, <Source 'test2.csv'>, <Source 'test22.csv'>, <Source 'test33.csv'>, <Source 'Procrustes_comps.csv'>, <Source 'Procrustes_transposed.csv'>, <Source 'Procrustes_c1.csv'>, <Source 'website_log_unique.csv'>, <Source 'crosses_rates_benchmarks.csv'>, <Source 'Transpose of crosses_rates_benchmarks2.csv'>, <Source 'ETFs.csv'>, <Source 'usdweekly.csv'>, <Source 'Output.csv 2'>, <Source 'Output.csv'>, <Source 'Output 1990+.csv 1'>, <Source 'Output.csv 3'>, <Source 'Output.csv 4'>, <Source 'Output 1990+.csv'>, <Source 'Output.csv 5'>, <Source 'Output 1972+.csv'>, <Source 'Output 1972+ Fama Forward.csv'>, <Source 'Output.csv 1'>, <Source 'Output Adj Calcs.csv'>, <Source 'Output Abstract Submittal.csv'>, <Source 'Macro Data Expanded.csv'>, <Source 'S&P output.csv'>, <Source 'output.csv'>, <Source 'Micro_Filtered.csv'>, <Source '8-15,Russell2000,output.csv'>]\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 3967
+            },
+            "evaluatorReader": true,
+            "lineCount": 2
+        },
+        {
+            "id": "codevZms5t",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "source=sources[1]",
+                    "print len(source.get_networks())"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "51\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 21683
+            },
+            "evaluatorReader": true,
+            "lineCount": 2
+        },
+        {
+            "id": "codeE1OlE2",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "source.show()"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 1689
+            },
+            "evaluatorReader": true,
+            "lineCount": 1
+        },
+        {
+            "id": "codef1DraW",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "network = source.create_network(\"test_network1\",{",
+                    "                                              ’metric’: {’id’: ’Norm Correlation’},",
+                    "                                              ’column_set_id’: col_set[’id’],",
+                    "                                              ’lenses’: [{’resolution’: 30, ’id’: ’MDS coord 1’,",
+                    "                                              ’equalize’: True, ’gain’: 3.0},",
+                    "                                              {’resolution’: 30, ’id’: ’MDS coord 2’,",
+                    "                                              ’equalize’: True, ’gain’: 3.0}]",
+                    "                                              }",
+                    "                                              )"
+                ]
+            },
+            "output": {
+                "state": {}
+            },
+            "evaluatorReader": true,
+            "lineCount": 9
+        },
+        {
+            "id": "codetCjbuh",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "mega_set = pandas.DataFrame.merge(indexed_data,back1w, how = 'inner', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,back1, how = 'inner', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,back2, how = 'inner', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,back3, how = 'inner', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,back6, how = 'inner', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,back1y, how = 'inner', left_index=True, right_index= True)",
+                    "print mega_set.shape",
+                    "",
+                    "mega_set = pandas.DataFrame.merge(mega_set,vol1m, how = 'inner', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,vol2m, how = 'inner', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,vol3m, how = 'inner', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,vol6m, how = 'inner', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,vol1y, how = 'inner', left_index=True, right_index= True)",
+                    "",
+                    "mega_set = pandas.DataFrame.merge(mega_set,vol1m3m, how = 'inner', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,vol3m1y, how = 'inner', left_index=True, right_index= True)",
+                    "",
+                    "mega_set = pandas.DataFrame.merge(mega_set,back6m1y, how = 'inner', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,back3m6m, how = 'inner', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,back1m3m, how = 'inner', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,back1w1m, how = 'inner', left_index=True, right_index= True)",
+                    "",
+                    "mega_set = pandas.DataFrame.merge(mega_set,forward1w, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,forward1, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,forward2, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,forward3, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,forward6, how = 'outer', left_index=True, right_index= True)",
+                    "",
+                    "mega_set = pandas.DataFrame.merge(mega_set,vol1m_forward, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,vol2m_forward, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,vol3m_forward, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,vol6m_forward, how = 'outer', left_index=True, right_index= True)",
+                    "",
+                    "mega_set = pandas.DataFrame.merge(mega_set,forward1back1, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,forward1back3, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,forward3back3, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,forward3back6, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,forward6back1y, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,forward1m3m, how = 'outer', left_index=True, right_index= True)",
+                    "",
+                    "mega_set = pandas.DataFrame.merge(mega_set,volforward1back3, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,volforward3back3, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,volforward3back6, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,volforward6back1y, how = 'outer', left_index=True, right_index= True)",
+                    "mega_set = pandas.DataFrame.merge(mega_set,volforward3m6m, how = 'outer', left_index=True, right_index= True)",
+                    "",
+                    "",
+                    "print mega_set.shape",
+                    "counts = range(0,len(mega_set))",
+                    "counts2 = pandas.DataFrame(data= counts,index= mega_set.index)",
+                    "mega_set2 = pandas.DataFrame.merge(mega_set,counts2, how = 'outer', left_index=True, right_index= True)",
+                    "print mega_set2.shape",
+                    "mega_set2.to_csv('/Users/shane/Google Drive/Quant work/FF_benchmarks_with_vols.csv')"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "(12138, 308)\n(12138, 1672)"
+                        },
+                        {
+                            "type": "out",
+                            "value": "\n(12138, 1673)"
+                        },
+                        {
+                            "type": "out",
+                            "value": "\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 13758
+            },
+            "evaluatorReader": true,
+            "lineCount": 53
+        },
+        {
+            "id": "codemlJTNK",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "mega_set2 = pandas.DataFrame.merge(mega_set,counts2, how = 'outer', left_index=True, right_index= True)"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 559
+            },
+            "evaluatorReader": true,
+            "lineCount": 1
+        },
+        {
+            "id": "code65AUal",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "mega_set2.to_csv('/Users/shane/Google Drive/Quant work/FF_benchmarks_with_volatilities_count2.csv')",
+                    "",
+                    ""
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 11889
+            },
+            "evaluatorReader": true,
+            "lineCount": 3
+        },
+        {
+            "id": "codeZpka9L",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "counts = range(0,len(mega_set))",
+                    ""
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 366
+            },
+            "evaluatorReader": true,
+            "lineCount": 2
+        },
+        {
+            "id": "codeXKTJr1",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "#counts2 = pandas.Series(counts, index = mega_set.index)",
+                    "#counts2 = pandas.DataFrame(data= counts,index= mega_set.index)",
+                    "print counts2[0:4]",
+                    "print mega_set2.shape",
+                    "print len(counts2)"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "            0\nUnnamed: 0   \n1966-07-19  0\n1966-07-20  1\n1966-07-21  2\n1966-07-22  3\n(12305, 1629)\n12305\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 296
+            },
+            "evaluatorReader": true,
+            "lineCount": 5
+        },
+        {
+            "id": "codeI1rY3z",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "print i",
+                    "j=3",
+                    "print both_sets2.iloc[i,j]",
+                    "print both_sets.iloc[508:510,8]",
+                    "print both_sets2.iloc[i,j]/both_sets2.iloc[i-1,j]",
+                    "print numpy.log(double(both_sets2.iloc[i,j])/double(both_sets2.iloc[i-1,j]))",
+                    "print both_sets2.columns[3] in log",
+                    "print daily_returns.head(7)",
+                    ""
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "509\n-0.000350026250291\nUnnamed: 0\n1965-07-15    85.720001\n1965-07-16    85.690002\nName: YAHOO/INDEX_GSPC Adj Close, dtype: float64\n0.200200631951\n-1.60843525551\nTrue\n            FRED/DGS1 VALUE  FRED/DGS5 VALUE  FRED/DGS10 VALUE  \\\nUnnamed: 0                                                       \n1965-07-13         0.000000         0.000000          0.000000   \n1965-07-14         0.039900         0.041500          0.042100   \n1965-07-15         0.039401         0.041085          0.041579   \n1965-07-16         0.039406         0.041089          0.041584   \n1965-07-19         3.980000         4.140000          4.200000   \n1965-07-20         3.980000         4.140000          4.200000   \n1965-07-21         3.980000         4.140000          4.200000   \n\n            YAHOO/INDEX_GSPC Adj Close    Mkt-RF       SMB       HML  \\\nUnnamed: 0                                                             \n1965-07-13                   -0.001168 -0.001301 -0.001902 -0.002403   \n1965-07-14                    0.003266  0.002896  0.001399  0.001599   \n1965-07-15                   -0.001748 -0.001001  0.002896 -0.000200   \n1965-07-16                   -0.000350 -0.000400  0.000200 -0.000500   \n1965-07-19                   85.629997 -0.090000  0.070000 -0.270000   \n1965-07-20                   84.550003 -1.240000 -0.230000  0.240000   \n1965-07-21                   84.070000 -0.550000 -0.080000  0.220000   \n\n                 RMW       CMA     RF    ...        Manuf     Trans     Phone  \\\nUnnamed: 0                               ...                                    \n1965-07-13 -0.000400  0.000700  0.000    ...    -0.004309 -0.005616  0.003195   \n1965-07-14  0.000500 -0.001401  0.015    ...    -0.005917  0.006181 -0.003005   \n1965-07-15 -0.000800 -0.000800  0.000    ...    -0.005817  0.003195 -0.001001   \n1965-07-16 -0.001201 -0.002503  0.015    ...    -0.003406 -0.000900 -0.000100   \n1965-07-19 -0.080000  0.180000  0.015    ...    -0.360000 -0.240000 -0.370000   \n1965-07-20 -0.170000  0.490000  0.015    ...    -1.050000 -1.840000 -0.390000   \n1965-07-21 -0.390000  0.340000  0.015    ...    -0.340000 -0.580000  0.120000   \n\n               TV        Utils     Whlsl     Rtail     Money     Srvc   \\\nUnnamed: 0                                                               \n1965-07-13 -0.008839 -0.002403  0.012818  0.000000 -0.004510  0.001499   \n1965-07-14  0.002896  0.000100 -0.003105 -0.000500 -0.002303  0.004092   \n1965-07-15  0.005982 -0.001201  0.002796 -0.001001  0.001599  0.003095   \n1965-07-16 -0.010556 -0.000500  0.007373  0.004689  0.000600  0.003992   \n1965-07-19 -0.800000 -0.120000 -0.070000 -0.200000 -0.280000 -0.470000   \n1965-07-20 -2.480000 -0.460000 -1.440000 -1.570000 -0.680000 -1.560000   \n1965-07-21 -0.070000 -0.580000 -1.470000 -0.790000 -0.200000 -0.650000   \n\n               Govt   \nUnnamed: 0            \n1965-07-13 -0.014099  \n1965-07-14  0.014100  \n1965-07-15 -0.021224  \n1965-07-16  0.021174  \n1965-07-19  0.700000  \n1965-07-20 -1.390000  \n1965-07-21 -1.410000  \n\n[7 rows x 44 columns]\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "D8093985F41F4DE3AD955134913DF0BD",
+                "elapsedTime": 209
+            },
+            "evaluatorReader": true,
+            "lineCount": 9
+        }
+    ],
+    "namespace": {}
+}

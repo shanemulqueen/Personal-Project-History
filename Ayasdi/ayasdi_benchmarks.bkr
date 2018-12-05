@@ -1,0 +1,713 @@
+{
+    "beaker": "2",
+    "evaluators": [
+        {
+            "name": "Html",
+            "plugin": "Html",
+            "view": {
+                "cm": {
+                    "mode": "htmlmixed"
+                }
+            }
+        },
+        {
+            "name": "JavaScript",
+            "plugin": "JavaScript",
+            "jsSetting2": "",
+            "jsSetting1": "",
+            "view": {
+                "cm": {
+                    "mode": "javascript",
+                    "background": "#FFE0F0"
+                }
+            }
+        },
+        {
+            "name": "IPython",
+            "plugin": "IPython",
+            "setup": "%matplotlib inline\nimport numpy\nimport matplotlib\nfrom matplotlib import pylab, mlab, pyplot\nnp = numpy\nplt = pyplot\nfrom IPython.display import display\nfrom IPython.core.pylabtools import figsize, getfigs\nfrom pylab import *\nfrom numpy import *\n",
+            "view": {
+                "cm": {
+                    "mode": "python"
+                }
+            }
+        }
+    ],
+    "cells": [
+        {
+            "id": "code5SUOTN",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "#import libraries",
+                    "import numpy",
+                    "import pandas",
+                    "import matplotlib",
+                    "import math",
+                    "import Quandl",
+                    "from array import array",
+                    "import csv",
+                    "import statsmodels",
+                    "from statsmodels.graphics.api import qqplot",
+                    "import matplotlib.pyplot as plt",
+                    "import statsmodels.api as sm"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "43A0FDE4B16440B4916FC9786AD1E559",
+                "elapsedTime": 5717
+            },
+            "evaluatorReader": true,
+            "lineCount": 12
+        },
+        {
+            "id": "codeNXuFi2",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "token = 'AyC4SoKiufan7rQSRZA4'",
+                    "start_date = '1992-09-16'",
+                    "end_date = '2015-12-18'",
+                    "",
+                    "#raw_data = Quandl.get(dataset,trim_start=start_date,trim_end=end_date,authtoken=token)"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "00E323F1173743F99FA259E1DEDF86E5",
+                "elapsedTime": 294
+            },
+            "evaluatorReader": true,
+            "lineCount": 5
+        },
+        {
+            "id": "codelnZ3q3",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "raw_data = Quandl.get('ML/TRI',trim_start=start_date,trim_end=end_date,authtoken=token)",
+                    "print raw_data.shape"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "(6053, 1)\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "00E323F1173743F99FA259E1DEDF86E5",
+                "elapsedTime": 3601
+            },
+            "evaluatorReader": true,
+            "lineCount": 2
+        },
+        {
+            "id": "codeOS15w6",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "raw_data2 = Quandl.get('YAHOO/INDEX_VIX',trim_start=start_date,trim_end=end_date,authtoken=token)",
+                    "print raw_data2.shape"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "(5860, 6)\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "00E323F1173743F99FA259E1DEDF86E5",
+                "elapsedTime": 4030
+            },
+            "evaluatorReader": true,
+            "lineCount": 2
+        },
+        {
+            "id": "codek6J0nl",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "raw_data.index[0]",
+                    "both_datasets = pandas.DataFrame.merge(raw_data,raw_data2, how ='inner', left_index=True,right_index=True)",
+                    "print both_datasets.shape"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "(5858, 7)\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "00E323F1173743F99FA259E1DEDF86E5",
+                "elapsedTime": 230
+            },
+            "evaluatorReader": true,
+            "lineCount": 3
+        },
+        {
+            "id": "codewNCK4S",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "quandl_keys = ['FRED/DTWEXM']",
+                    "#begin exchange rates",
+                    "quandl_keys.append('BOE/XUDLERD')",
+                    "quandl_keys.append('BOE/XUDLADS')",
+                    "quandl_keys.append('BOE/XUDLCDS')",
+                    "quandl_keys.append('BOE/XUDLDKS')",
+                    "quandl_keys.append('BOE/XUDLHDS')",
+                    "quandl_keys.append('BOE/XUDLJYS')",
+                    "quandl_keys.append('BOE/XUDLNDS')",
+                    "quandl_keys.append('BOE/XUDLNKS')",
+                    "quandl_keys.append('BOE/XUDLSRS')",
+                    "quandl_keys.append('BOE/XUDLSFS')",
+                    "quandl_keys.append('BOE/XUDLZRS')",
+                    "quandl_keys.append('BOE/XUDLGBD')",
+                    "quandl_keys.append('BOE/XUDLSER')",
+                    "#end exchange rates",
+                    "#begin effective indices",
+                    "quandl_keys.append('BOE/XUDLBK67')",
+                    "quandl_keys.append('BOE/XUDLCDG')",
+                    "quandl_keys.append('BOE/XUDLDKG')",
+                    "quandl_keys.append('BOE/XUDLJYG')",
+                    "quandl_keys.append('BOE/XUDLNDG')",
+                    "quandl_keys.append('BOE/XUDLNKG')",
+                    "quandl_keys.append('BOE/XUDLUSG')",
+                    "quandl_keys.append('BOE/XUDLERG')",
+                    "quandl_keys.append('BOE/XUDLSFG')",
+                    "#end effective indices",
+                    "#begin USD/GBP discount rates and forwards",
+                    "quandl_keys.append('BOE/XUDLDS1')",
+                    "quandl_keys.append('BOE/XUDLDS3')",
+                    "quandl_keys.append('BOE/XUDLDS6')",
+                    "quandl_keys.append('BOE/XUDLDSY')",
+                    "quandl_keys.append('BOE/XUDLDF1')",
+                    "quandl_keys.append('BOE/XUDLDF3')",
+                    "quandl_keys.append('BOE/XUDLDF6')",
+                    "quandl_keys.append('BOE/XUDLDFY')",
+                    "#end discount rates and forwards",
+                    "#begin yields",
+                    "quandl_keys.append('FRED/DGS6MO')",
+                    "quandl_keys.append('FRED/DGS2')",
+                    "quandl_keys.append('FRED/DGS10')",
+                    "quandl_keys.append('FRED/T10Y2Y')",
+                    "quandl_keys.append('FRED/AAA10Y')",
+                    "quandl_keys.append('FRED/BAA10Y')",
+                    "quandl_keys.append('MOFJ/INTEREST_RATE_JAPAN_1Y')",
+                    "quandl_keys.append('MOFJ/INTEREST_RATE_JAPAN_5Y')",
+                    "quandl_keys.append('MOFJ/INTEREST_RATE_JAPAN_10Y')",
+                    "quandl_keys.append('MOFJ/INTEREST_RATE_JAPAN_20Y')",
+                    "quandl_keys.append('BOE/IUDSRZC')",
+                    "quandl_keys.append('BOE/IUDMRZC')",
+                    "quandl_keys.append('BOE/IUDSIIF')",
+                    "quandl_keys.append('BOE/IUDMIIF')",
+                    "#end yields",
+                    "#begin bond indices",
+                    "quandl_keys.append('ML/TRI')",
+                    "quandl_keys.append('YAHOO/INDEX_FVX')",
+                    "quandl_keys.append('YAHOO/INDEX_TYX')",
+                    "#end bond indices",
+                    "#begin equity indices",
+                    "quandl_keys.append('YAHOO/INDEX_GSPC')",
+                    "quandl_keys.append('YAHOO/INDEX_AEX')",
+                    "quandl_keys.append('YAHOO/INDEX_GDAXI')",
+                    "quandl_keys.append('YAHOO/INDEX_STOXX50E')",
+                    "quandl_keys.append('YAHOO/DJT')",
+                    "quandl_keys.append('NIKKEI/INDEX')",
+                    "#end equity indices",
+                    "#begin econometric crap",
+                    "quandl_keys.append('YAHOO/INDEX_VIX')",
+                    "quandl_keys.append('FRED/CISD678FRBCLE')",
+                    "quandl_keys.append('FRED/ABSSD678FRBCLE')",
+                    "quandl_keys.append('FRED/WLEMUINDXD')",
+                    "quandl_keys.append('FRED/SMCD678FRBCLE')",
+                    "quandl_keys.append('FRED/CRESD678FRBCLE')",
+                    "quandl_keys.append('PUP/EQUITY_MKT_UNCRTAINTY_INDEX')",
+                    "#end econometric crap",
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "00E323F1173743F99FA259E1DEDF86E5",
+                "elapsedTime": 303
+            },
+            "evaluatorReader": true,
+            "lineCount": 78
+        },
+        {
+            "id": "codeD2BnwA",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "bulk_set.to_csv('/Users/shane/Google Drive/Quant work/raw_quandl_benchmarks.csv')"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "00E323F1173743F99FA259E1DEDF86E5",
+                "elapsedTime": 664
+            },
+            "evaluatorReader": true,
+            "lineCount": 1
+        },
+        {
+            "id": "code42dHMW",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "bulk_set = Quandl.get(quandl_keys[0],trim_start=start_date,trim_end=end_date,authtoken=token)",
+                    "bulk_set.rename(columns = {bulk_set.columns[0]:quandl_keys[0]+ ' ' + bulk_set.columns[0]}, inplace = True)",
+                    "lengths = numpy.zeros((len(quandl_keys),2))",
+                    "lengths[0,0] = len(bulk_set)",
+                    "lengths[0,1] = len(bulk_set)",
+                    "",
+                    "",
+                    "for i in range(1, len(quandl_keys)):",
+                    "    temp_data = Quandl.get(quandl_keys[i],trim_start=start_date,trim_end=end_date,authtoken=token)",
+                    "    for j in range(0,temp_data.shape[1]):",
+                    "        temp_data.rename(columns = {temp_data.columns[j]:quandl_keys[i]+ ' ' + temp_data.columns[j]}, inplace = True)",
+                    "    if len(temp_data) > 5600:",
+                    "        bulk_set = pandas.DataFrame.merge(bulk_set,temp_data, how ='inner', left_index=True,right_index=True)",
+                    "    lengths[i,0] = len(temp_data)",
+                    "    lengths[i,1] = len(bulk_set)",
+                    "print bulk_set.shape"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "(5273, 104)\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "00E323F1173743F99FA259E1DEDF86E5",
+                "elapsedTime": 149985,
+                "dataresult": 61
+            },
+            "evaluatorReader": true,
+            "lineCount": 16
+        },
+        {
+            "id": "codebzgyeS",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "print lengths"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "[[ 5857.  5857.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5903.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5880.  5726.]\n [ 5820.  5707.]\n [ 5820.  5707.]\n [ 5820.  5707.]\n [ 5820.  5707.]\n [ 5819.  5706.]\n [ 5819.  5706.]\n [ 5719.  5422.]\n [ 5719.  5422.]\n [ 5719.  5422.]\n [ 5719.  5422.]\n [ 5879.  5421.]\n [ 5879.  5421.]\n [ 5879.  5421.]\n [ 5879.  5421.]\n [ 6053.  5418.]\n [ 5839.  5416.]\n [ 5839.  5416.]\n [ 5860.  5416.]\n [ 5913.  5368.]\n [ 5901.  5338.]\n [ 5977.  5321.]\n [ 5867.  5318.]\n [ 5719.  5318.]\n [ 5860.  5318.]\n [ 5653.  5273.]\n [ 5653.  5273.]\n [ 8494.  5273.]\n [ 5653.  5273.]\n [ 5653.  5273.]\n [ 8494.  5273.]]\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "00E323F1173743F99FA259E1DEDF86E5",
+                "elapsedTime": 238
+            },
+            "evaluatorReader": true,
+            "lineCount": 1
+        },
+        {
+            "id": "codeOXUDpN",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "#lengths = numpy.zeros((len(quandl_keys),2))",
+                    "#bulk_set = Quandl.get(quandl_keys[0],trim_start=start_date,trim_end=end_date,authtoken=token)",
+                    "print bulk_set.columns[0]"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "VALUE\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "00E323F1173743F99FA259E1DEDF86E5",
+                "elapsedTime": 236
+            },
+            "evaluatorReader": true,
+            "lineCount": 3
+        },
+        {
+            "id": "codeXJnSTO",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "other_benchmarks = pandas.read_csv('/Users/shane/Google Drive/Quant work/Benchmarks-adjusted close.csv')"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "43A0FDE4B16440B4916FC9786AD1E559",
+                "elapsedTime": 355
+            },
+            "evaluatorReader": true,
+            "lineCount": 1
+        },
+        {
+            "id": "codeLpTqnh",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "partial1= other_benchmarks.iloc[:,0:2]",
+                    "partial1.index = other_benchmarks.iloc[:,0]",
+                    "partial1 = partial1.dropna()",
+                    "partial2= other_benchmarks.iloc[:,2:4]",
+                    "partial2.index = other_benchmarks.iloc[:,2]",
+                    "partial2 = partial2.dropna()",
+                    "partial = pandas.DataFrame.merge(partial1,partial2, how ='inner', left_index=True,right_index=True)",
+                    "print partial1.shape",
+                    "print partial2.shape",
+                    "print partial.shape"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "(7130, 2)\n(7130, 2)\n(7130, 4)\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "43A0FDE4B16440B4916FC9786AD1E559",
+                "elapsedTime": 266
+            },
+            "evaluatorReader": true,
+            "lineCount": 10
+        },
+        {
+            "id": "code9Z2G4B",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "for i in range(2,15):",
+                    "    partial2= other_benchmarks.iloc[:,(2*i):(2*i+2)]",
+                    "    partial2.index = other_benchmarks.iloc[:,2]",
+                    "    partial2 = partial2.dropna()",
+                    "    partial = pandas.DataFrame.merge(partial,partial2, how ='inner', left_index=True,right_index=True)",
+                    "print partial.shape"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "(5449, 28)\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "43A0FDE4B16440B4916FC9786AD1E559",
+                "elapsedTime": 412
+            },
+            "evaluatorReader": true,
+            "lineCount": 6
+        },
+        {
+            "id": "code5IA0Ap",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "partial.to_csv('/Users/shane/Google Drive/Quant work/merged_yahoo_benchmarks_ex_KBW.csv')"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "43A0FDE4B16440B4916FC9786AD1E559",
+                "elapsedTime": 441
+            },
+            "evaluatorReader": true,
+            "lineCount": 1
+        },
+        {
+            "id": "codeCqRXUQ",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "money_net_benchmarks = pandas.read_csv('/Users/shane/Google Drive/Quant work/money_net_benchmarks.csv')"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "00E323F1173743F99FA259E1DEDF86E5",
+                "elapsedTime": 338
+            },
+            "evaluatorReader": true,
+            "lineCount": 1
+        },
+        {
+            "id": "codec2Ka30",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "partial1= money_net_benchmarks.iloc[:,0:2]",
+                    "partial1.index = money_net_benchmarks.iloc[:,0]",
+                    "partial1 = partial1.dropna()",
+                    "partial2= money_net_benchmarks.iloc[:,2:4]",
+                    "partial2.index = money_net_benchmarks.iloc[:,2]",
+                    "partial2 = partial2.dropna()",
+                    "partial = pandas.DataFrame.merge(partial1,partial2, how ='inner', left_index=True,right_index=True)",
+                    "for i in range(2,15):",
+                    "    partial2= money_net_benchmarks.iloc[:,(2*i):(2*i+2)]",
+                    "    partial2.index = money_net_benchmarks.iloc[:,2]",
+                    "    partial2 = partial2.dropna()",
+                    "    partial = pandas.DataFrame.merge(partial,partial2, how ='inner', left_index=True,right_index=True)",
+                    "print partial.shape"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "(5788, 30)\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "00E323F1173743F99FA259E1DEDF86E5",
+                "elapsedTime": 289
+            },
+            "evaluatorReader": true,
+            "lineCount": 13
+        },
+        {
+            "id": "codeg1KVpL",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "partial.to_csv('/Users/shane/Google Drive/Quant work/merged_moneynet_benchmarks.csv')",
+                    ""
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "00E323F1173743F99FA259E1DEDF86E5",
+                "elapsedTime": 336
+            },
+            "evaluatorReader": true,
+            "lineCount": 2
+        },
+        {
+            "id": "codef6VKPu",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "sub1 = pandas.read_csv('/Users/shane/Google Drive/Quant work/merged_moneynet_benchmarks2.csv')",
+                    "sub2 = pandas.read_csv('/Users/shane/Google Drive/Quant work/merged_yahoo_benchmarks_ex_KBW.csv')",
+                    "sub3 = pandas.read_csv('/Users/shane/Google Drive/Quant work/quandl_benchmarks_close.csv')"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "43A0FDE4B16440B4916FC9786AD1E559",
+                "elapsedTime": 373,
+                "dataresult": [
+                    5788,
+                    30
+                ]
+            },
+            "evaluatorReader": true,
+            "lineCount": 3
+        },
+        {
+            "id": "codeNOuRmX",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "sub_1= sub1.iloc[:,1:]",
+                    "sub_1.index = sub1.iloc[:,0]",
+                    "sub_2= sub2.iloc[:,1:]",
+                    "sub_2.index = sub2.iloc[:,0]",
+                    "sub_3= sub3.iloc[:,1:]",
+                    "sub_3.index = sub3.iloc[:,0]"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "43A0FDE4B16440B4916FC9786AD1E559",
+                "elapsedTime": 347
+            },
+            "evaluatorReader": true,
+            "lineCount": 6
+        },
+        {
+            "id": "coderQzzCO",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "print sub_1.shape",
+                    "print sub_2.shape",
+                    "print sub_3.shape"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "(5788, 15)\n(5377, 15)\n(5273, 61)\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "00E323F1173743F99FA259E1DEDF86E5",
+                "elapsedTime": 251
+            },
+            "evaluatorReader": true,
+            "lineCount": 3
+        },
+        {
+            "id": "codef0JpAk",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "all_benchmarks= pandas.DataFrame.merge(sub_1,sub_2, how ='inner', left_index=True,right_index=True)",
+                    "all_benchmarks= pandas.DataFrame.merge(all_benchmarks,sub_3, how ='inner', left_index=True,right_index=True)",
+                    "all_benchmarks.to_csv('/Users/shane/Google Drive/Quant work/ayasdi_benchmarks_raw_ex_KBW.csv')",
+                    "print all_benchmarks.shape"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "(4921, 90)\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "43A0FDE4B16440B4916FC9786AD1E559",
+                "elapsedTime": 957
+            },
+            "evaluatorReader": true,
+            "lineCount": 4
+        },
+        {
+            "id": "codeC0e9xE",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "all_benchmarks.to_csv('/Users/shane/Google Drive/Quant work/ayasdi_benchmarks_raw.csv')"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "00E323F1173743F99FA259E1DEDF86E5",
+                "elapsedTime": 564
+            },
+            "evaluatorReader": true,
+            "lineCount": 1
+        }
+    ],
+    "namespace": {}
+}

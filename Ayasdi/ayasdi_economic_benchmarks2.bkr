@@ -1,0 +1,283 @@
+{
+    "beaker": "2",
+    "evaluators": [
+        {
+            "name": "Html",
+            "plugin": "Html",
+            "view": {
+                "cm": {
+                    "mode": "htmlmixed"
+                }
+            }
+        },
+        {
+            "name": "JavaScript",
+            "plugin": "JavaScript",
+            "jsSetting2": "",
+            "jsSetting1": "",
+            "view": {
+                "cm": {
+                    "mode": "javascript",
+                    "background": "#FFE0F0"
+                }
+            }
+        },
+        {
+            "name": "IPython",
+            "plugin": "IPython",
+            "setup": "%matplotlib inline\nimport numpy\nimport matplotlib\nfrom matplotlib import pylab, mlab, pyplot\nnp = numpy\nplt = pyplot\nfrom IPython.display import display\nfrom IPython.core.pylabtools import figsize, getfigs\nfrom pylab import *\nfrom numpy import *\n",
+            "view": {
+                "cm": {
+                    "mode": "python"
+                }
+            }
+        }
+    ],
+    "cells": [
+        {
+            "id": "codeQvR4dX",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "#import libraries",
+                    "import numpy",
+                    "import pandas",
+                    "import matplotlib",
+                    "import math",
+                    "import Quandl",
+                    "from array import array",
+                    "import csv",
+                    "import statsmodels"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "803FCD668D8E45ADB761DB603A89AADA",
+                "elapsedTime": 2908
+            },
+            "evaluatorReader": true,
+            "lineCount": 9
+        },
+        {
+            "id": "code9lPIlH",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "token = 'AyC4SoKiufan7rQSRZA4'",
+                    "start_date = '1992-02-01'",
+                    "end_date = '2015-12-18'"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "803FCD668D8E45ADB761DB603A89AADA",
+                "elapsedTime": 277
+            },
+            "evaluatorReader": true,
+            "lineCount": 3
+        },
+        {
+            "id": "codeINcElg",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "quandl_keys = ['FRED/DTWEXM']",
+                    "raw_data2 = Quandl.get('BLSI/WPS022',trim_start=start_date,trim_end=end_date,authtoken=token)"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "803FCD668D8E45ADB761DB603A89AADA",
+                "elapsedTime": 574
+            },
+            "evaluatorReader": true,
+            "lineCount": 2
+        },
+        {
+            "id": "codewdqB1e",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "quandl_keys = ['BLSI/WPS022']",
+                    "quandl_keys.append('BLSI/WPS023')",
+                    "quandl_keys.append('BLSI/WPS014')",
+                    "quandl_keys.append('BLSI/WPS054')",
+                    "quandl_keys.append('BLSI/WPS1421')",
+                    "quandl_keys.append('MOODY/AAAYLD')",
+                    "quandl_keys.append('MOODY/BAAYLD')",
+                    "quandl_keys.append('USTREASURY/HQMYC')",
+                    "#quandl_keys.append('ECRI/USLEADING')",
+                    "quandl_keys.append('ECRI/USCOIN')",
+                    "quandl_keys.append('ECRI/USLAGGING')",
+                    "quandl_keys.append('USMISERY/INDEX')",
+                    "quandl_keys.append('ISM/MAN_PMI')",
+                    "quandl_keys.append('ISM/MAN_DELIV')",
+                    "quandl_keys.append('ISM/MAN_NEWORDERS')",
+                    "quandl_keys.append('ISM/NONMAN_NEWORD')",
+                    "quandl_keys.append('ISM/MAN_PROD')",
+                    "quandl_keys.append('ISM/MAN_IMPORTS')",
+                    "quandl_keys.append('ISM/MAN_PRICES')",
+                    "quandl_keys.append('ISM/BUY_CAP_EXP')",
+                    "quandl_keys.append('ISM/MAN_INVENT')",
+                    "quandl_keys.append('USCENSUS/BI_MARTS_454_MPCSM_SA')",
+                    "quandl_keys.append('USCENSUS/BI_MARTS_44X72_MPCSM_SA')",
+                    "quandl_keys.append('USCENSUS/BI_RESSALES_FORSALE_TOTAL_SA')",
+                    "quandl_keys.append('USCENSUS/BI_MARTS_443_MPCSM_SA')",
+                    "quandl_keys.append('USCENSUS/BI_MARTS_451_SM_SA')",
+                    "quandl_keys.append('USCENSUS/BI_RESCONST_ASTARTS_TOTAL_SA')",
+                    "quandl_keys.append('USCENSUS/BI_MARTS_441X_MPCSM_SA')",
+                    "quandl_keys.append('USCENSUS/BI_MARTS_4451_SM_SA')",
+                    "quandl_keys.append('USCENSUS/BI_RESCONST_APERMITS_MULTI_SA')",
+                    "quandl_keys.append('USCENSUS/BI_RESCONST_ASTARTS_MULTI_SA')",
+                    "quandl_keys.append('USCENSUS/BI_RESCONST_UNDERCONST_MULTI_SA')",
+                    "quandl_keys.append('USCENSUS/BI_RESCONST_UNDERCONST_SINGLE_SA')",
+                    "quandl_keys.append('USCENSUS/BI_MARTS_453_MPCSM_SA')",
+                    "quandl_keys.append('USCENSUS/BI_M3_31S_VS_SA')",
+                    "quandl_keys.append('USCENSUS/BI_M3_22S_FI_SA')",
+                    "quandl_keys.append('PUP/US_MONTHLY_MAIN_INDEX')"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "803FCD668D8E45ADB761DB603A89AADA",
+                "elapsedTime": 296
+            },
+            "evaluatorReader": true,
+            "lineCount": 37
+        },
+        {
+            "id": "codeWsdH8S",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "bulk_set = Quandl.get(quandl_keys[0],trim_start=start_date,trim_end=end_date,authtoken=token)",
+                    "bulk_set.rename(columns = {bulk_set.columns[0]:quandl_keys[0]+ ' ' + bulk_set.columns[0]}, inplace = True)",
+                    "lengths = numpy.zeros((len(quandl_keys),2))",
+                    "lengths[0,0] = len(bulk_set)",
+                    "lengths[0,1] = len(bulk_set)",
+                    "",
+                    "for i in range(1, len(quandl_keys)):",
+                    "    temp_data = Quandl.get(quandl_keys[i],trim_start=start_date,trim_end=end_date,authtoken=token)",
+                    "    for j in range(0,temp_data.shape[1]):",
+                    "        temp_data.rename(columns = {temp_data.columns[j]:quandl_keys[i]+ ' ' + temp_data.columns[j]}, inplace = True)",
+                    "    if len(temp_data) > 190:",
+                    "        bulk_set = pandas.DataFrame.merge(bulk_set,temp_data, how ='outer', left_index=True,right_index=True)",
+                    "    lengths[i,0] = len(temp_data)",
+                    "    lengths[i,1] = len(bulk_set)",
+                    "print bulk_set.shape"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "(572, 273)\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "803FCD668D8E45ADB761DB603A89AADA",
+                "elapsedTime": 14009
+            },
+            "evaluatorReader": true,
+            "lineCount": 15
+        },
+        {
+            "id": "codeYwvAji",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "temp_data = Quandl.get('ECRI/USLEADING',trim_start=start_date,trim_end=end_date,authtoken=token)",
+                    "for j in range(0,temp_data.shape[1]):",
+                    "    temp_data.rename(columns = {temp_data.columns[j]:'ECRI/USLEADING'+ ' ' + temp_data.columns[j]}, inplace = True)",
+                    "bulk_set2 = pandas.DataFrame.merge(bulk_set,temp_data, how ='inner', left_index=True,right_index=True)",
+                    "print bulk_set2.shape"
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "(80, 275)\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "803FCD668D8E45ADB761DB603A89AADA",
+                "elapsedTime": 1458
+            },
+            "evaluatorReader": true,
+            "lineCount": 5
+        },
+        {
+            "id": "codewvRH1S",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "print temp_data.shape "
+                ]
+            },
+            "output": {
+                "state": {},
+                "result": {
+                    "type": "Results",
+                    "outputdata": [
+                        {
+                            "type": "out",
+                            "value": "(1246, 2)\n"
+                        }
+                    ]
+                },
+                "selectedType": "Results",
+                "pluginName": "IPython",
+                "shellId": "803FCD668D8E45ADB761DB603A89AADA",
+                "elapsedTime": 193
+            },
+            "evaluatorReader": true,
+            "lineCount": 1
+        },
+        {
+            "id": "code8O8RtY",
+            "type": "code",
+            "evaluator": "IPython",
+            "input": {
+                "body": [
+                    "bulk_set.to_csv('/Users/shane/Google Drive/Quant work/raw_economic_benchmarks.csv')"
+                ]
+            },
+            "output": {
+                "state": {},
+                "selectedType": "Hidden",
+                "pluginName": "IPython",
+                "shellId": "803FCD668D8E45ADB761DB603A89AADA",
+                "elapsedTime": 310
+            },
+            "evaluatorReader": true,
+            "lineCount": 1
+        }
+    ],
+    "namespace": {}
+}
